@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
-project(protobuf_snd)
+project(ld06_driver)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,7 +10,8 @@ find_package(eCAL REQUIRED)
 find_package(Protobuf REQUIRED)
 
 set(source_files
-  main.cpp
+  src/serialib/serialib.cpp
+  src/main.cpp
 )
 
 set(protobuf_files
