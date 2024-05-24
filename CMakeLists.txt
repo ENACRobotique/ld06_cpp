@@ -10,7 +10,6 @@ find_package(eCAL REQUIRED)
 find_package(Protobuf REQUIRED)
 
 set(source_files
-  src/serialib/serialib.cpp
   src/main.cpp
   src/ld06.cpp
 )
