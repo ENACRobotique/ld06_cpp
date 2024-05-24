@@ -6,11 +6,11 @@
 #include <iostream>
 #include <thread>
 
+#include "ld06.h"
 #include "lidar_data.pb.h"
 
 
 //serialib: https://github.com/imabot2/serialib
-//
 
 int main(int argc, char** argv){
 
@@ -30,8 +30,8 @@ int main(int argc, char** argv){
   eCAL::Initialize(argc, argv, "ld06_driver");
   eCAL::protobuf::CPublisher<enac::Lidar> publisher("lidar_data");
 
-
-
+  
+  LD06 ld06;
 
 
   // Infinite loop (using eCAL::Ok() will enable us to gracefully shutdown the
@@ -40,7 +40,7 @@ int main(int argc, char** argv){
     uint8_t c;
     int ret = serial.readChar((char*)&c);
     if(ret == 1) {
-      printf("read 0x%X\n", c);
+      ld06.feed(&c,1);
     } else {
       printf("error reading byte: %d\n", ret);
     }

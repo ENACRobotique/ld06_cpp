@@ -12,6 +12,7 @@ find_package(Protobuf REQUIRED)
 set(source_files
   src/serialib/serialib.cpp
   src/main.cpp
+  src/ld06.cpp
 )
 
 set(protobuf_files
