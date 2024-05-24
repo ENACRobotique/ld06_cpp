@@ -14,6 +14,7 @@
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
 
+#define SERIAL_BUF_LEN 47
 
 int init_serial(int serial_port) {
     // Create new termios struct, we call it 'tty' for convention
@@ -95,13 +96,10 @@ int main(int argc, char** argv){
   // Infinite loop (using eCAL::Ok() will enable us to gracefully shutdown the
   // Process from another application)
   while (eCAL::Ok()){
-    uint8_t c;
-    int num_bytes = read(serial_port, &c, 1);
-    if(num_bytes == 1) {
-      ld06.feed(&c, 1);
-    } else {
-      printf("error reading byte: %d\n", num_bytes);
-    }
+    uint8_t cs[SERIAL_BUF_LEN];
+
+    int num_bytes = read(serial_port, cs, SERIAL_BUF_LEN);
+    ld06.feed(cs, num_bytes);
   }
 
   // finalize eCAL API
