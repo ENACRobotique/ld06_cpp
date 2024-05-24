@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <inttypes.h>
 #include <stddef.h>
 
@@ -23,6 +24,16 @@ uint16_t          timestamp;
 uint8_t           crc8; 
 }LiDARFrameTypeDef;
 
+
+typedef struct  
+{
+    uint16_t distance; 
+    uint8_t intensity; 
+    double angle;
+}Point;
+
+
+
 enum RxState{
     PERDU,
     ATTENTE_LEN,
@@ -34,16 +45,16 @@ class LD06
 {
 private:
     LiDARFrameTypeDef lidar_packet;
-    LidarPointStructDef points[LD06_NB_POINTS];
-    uint16_t angles[LD06_NB_POINTS];
+    std::array<Point,LD06_NB_POINTS> points;
     size_t nb_points;
     size_t packet_index;
     RxState rx_state;
+    std::function<void(std::array<Point,LD06_NB_POINTS>, size_t)> callback;
     
     void handle_data();
 
 public:
-    LD06();
+    LD06(std::function<void(std::array<Point,LD06_NB_POINTS>, size_t)> callback);
 
 
     int feed(uint8_t* buffer, size_t len);

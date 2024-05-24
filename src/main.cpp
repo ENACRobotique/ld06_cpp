@@ -31,7 +31,19 @@ int main(int argc, char** argv){
   eCAL::protobuf::CPublisher<enac::Lidar> publisher("lidar_data");
 
   
-  LD06 ld06;
+
+
+  LD06 ld06([&publisher](std::array<Point,LD06_NB_POINTS> points, size_t len){
+    enac::Lidar lidar_msg;
+    for (int i=0; i<len; i++){
+        lidar_msg.add_angles(360-points[i].angle);
+        lidar_msg.add_distances(points[i].distance);
+        lidar_msg.add_quality(points[i].intensity);
+    }
+    // Send the message
+    publisher.Send(lidar_msg);
+
+  });
 
 
   // Infinite loop (using eCAL::Ok() will enable us to gracefully shutdown the

@@ -36,11 +36,30 @@ uint8_t CalCRC8(uint8_t *p, uint8_t len){
 }
 
 
-LD06::LD06(): nb_points(0), packet_index(0), rx_state(PERDU) {}
+LD06::LD06(std::function<void(std::array<Point,LD06_NB_POINTS>, size_t)> callback): 
+    nb_points(0), packet_index(0), rx_state(PERDU), callback(callback) {}
 
 
 void LD06::handle_data(){
-
+    double start_angle = lidar_packet.start_angle / 100.0;
+    double end_angle = lidar_packet.end_angle / 100.0;
+    if (start_angle > end_angle){
+        end_angle += 360;
+    }
+    for (int i=0; i<POINT_PER_PACK; i++){
+        double angle = start_angle + i * (end_angle-start_angle)/(POINT_PER_PACK-1) ;
+        if (angle > 360){
+            angle -= 360;
+        }
+        if (nb_points != 0 && angle<points[nb_points-1].angle){
+            callback(points, nb_points);
+            nb_points= 0;
+            
+        }
+        
+        points[nb_points]={lidar_packet.point[i].distance, lidar_packet.point[i].intensity,angle};
+        nb_points++;
+    } 
 }
 
 
@@ -61,7 +80,7 @@ int LD06::feed(uint8_t* buffer, size_t len){
             lidar_packet.ver_len = c;
             uint8_t len = c & 0b00011111;
             if (len != 12){
-                printf("lidar_packet : taille de 12");
+                printf("lidar_packet : taille de 12 \n");
             }
             rx_state = RX_DATA;
             packet_index=2;
