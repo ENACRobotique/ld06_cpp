@@ -2,7 +2,7 @@
 #include <functional>
 #include <inttypes.h>
 #include <stddef.h>
-
+#include <array>
 #define POINT_PER_PACK 12 
 #define HEADER 0x54 
 #define LD06_NB_POINTS 500
